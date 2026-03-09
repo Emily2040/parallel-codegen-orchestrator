@@ -1,0 +1,28 @@
+{
+  "banned_phrases": [
+    "industrial-grade",
+    "enterprise-grade",
+    "world-class",
+    "cutting-edge",
+    "seamless",
+    "revolutionary",
+    "best-in-class",
+    "game-changer",
+    "robust and scalable",
+    "state-of-the-art",
+    "magic"
+  ],
+  "rules": [
+    "Do not pad output to hit arbitrary line counts.",
+    "Do not promise hidden or background work.",
+    "Do not emit fake hashes, checksums, benchmarks, or test results.",
+    "Prefer concrete file paths, symbols, commands, and verification evidence over hype."
+  ],
+  "preferred_substitutions": {
+    "robust": "name the failure mode and the handling logic",
+    "scalable": "name the likely bottleneck and the mitigation",
+    "secure": "name the threat and the concrete control",
+    "clean architecture": "name the modules and dependency direction",
+    "production ready": "name the missing checks, docs, and deployment steps"
+  }
+}

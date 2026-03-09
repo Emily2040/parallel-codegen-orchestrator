@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FinalReport",
+  "type": "object",
+  "required": [
+    "project_name",
+    "status",
+    "summary",
+    "delivered_files",
+    "verification",
+    "run_commands",
+    "known_issues",
+    "next_steps"
+  ],
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "COMPLETE",
+        "PARTIAL"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "delivered_files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "executed",
+        "not_executed",
+        "evidence"
+      ],
+      "properties": {
+        "executed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_executed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "run_commands": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "known_issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

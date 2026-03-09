@@ -1,0 +1,236 @@
+{
+  "project_name": "notes-service",
+  "overall_goal": "Build a FastAPI notes service with token auth, SQLite persistence, and pytest coverage.",
+  "mode": "greenfield",
+  "phase": "PLAN",
+  "tech_stack": [
+    "Python 3.12",
+    "FastAPI",
+    "SQLAlchemy",
+    "pytest"
+  ],
+  "assumptions": [
+    "A standard src layout is acceptable.",
+    "SQLite is sufficient for local development."
+  ],
+  "risks": [
+    "Auth middleware and route handlers must agree on token extraction semantics.",
+    "Database session lifecycle must be consistent across tests and runtime."
+  ],
+  "frozen_interfaces": [
+    {
+      "name": "Auth token dependency",
+      "path": "/src/notes_service/auth.py",
+      "contract": "A FastAPI dependency named require_token(request) that returns the caller token or raises HTTP 401."
+    },
+    {
+      "name": "Repository protocol",
+      "path": "/src/notes_service/repository.py",
+      "contract": "Functions create_note(session, payload), list_notes(session), and delete_note(session, note_id)."
+    }
+  ],
+  "modules": [
+    {
+      "module_id": "M-001",
+      "title": "Project skeleton and runtime configuration",
+      "description": "Create the application package, settings, dependency wiring, and entrypoint.",
+      "dependencies": [],
+      "files": [
+        {
+          "file_path": "/src/notes_service/app.py",
+          "purpose": "FastAPI app construction and router wiring"
+        },
+        {
+          "file_path": "/src/notes_service/settings.py",
+          "purpose": "Runtime configuration"
+        }
+      ],
+      "interface_contracts": [
+        "app exposes create_app() returning FastAPI"
+      ],
+      "owner_scope": [
+        "/src/notes_service/app.py",
+        "/src/notes_service/settings.py"
+      ],
+      "estimated_effort": "M",
+      "verification": {
+        "unit_tests": [],
+        "integration_tests": [
+          "App imports without runtime errors"
+        ],
+        "static_checks": [
+          "python -m py_compile src/notes_service/app.py"
+        ]
+      },
+      "can_parallelize": false
+    },
+    {
+      "module_id": "M-002",
+      "title": "Persistence layer",
+      "description": "Define the SQLAlchemy model, session factory, and repository functions for note CRUD.",
+      "dependencies": [
+        "M-001"
+      ],
+      "files": [
+        {
+          "file_path": "/src/notes_service/db.py",
+          "purpose": "Engine and session setup"
+        },
+        {
+          "file_path": "/src/notes_service/models.py",
+          "purpose": "SQLAlchemy note model"
+        },
+        {
+          "file_path": "/src/notes_service/repository.py",
+          "purpose": "CRUD operations"
+        }
+      ],
+      "interface_contracts": [
+        "Repository protocol frozen in planning"
+      ],
+      "owner_scope": [
+        "/src/notes_service/db.py",
+        "/src/notes_service/models.py",
+        "/src/notes_service/repository.py"
+      ],
+      "estimated_effort": "L",
+      "verification": {
+        "unit_tests": [
+          "Repository CRUD tests"
+        ],
+        "integration_tests": [],
+        "static_checks": [
+          "python -m py_compile src/notes_service/repository.py"
+        ]
+      },
+      "can_parallelize": true
+    },
+    {
+      "module_id": "M-003",
+      "title": "Auth middleware and dependency",
+      "description": "Implement token validation dependency and shared auth error handling.",
+      "dependencies": [
+        "M-001"
+      ],
+      "files": [
+        {
+          "file_path": "/src/notes_service/auth.py",
+          "purpose": "Token validation dependency"
+        }
+      ],
+      "interface_contracts": [
+        "Auth token dependency frozen in planning"
+      ],
+      "owner_scope": [
+        "/src/notes_service/auth.py"
+      ],
+      "estimated_effort": "S",
+      "verification": {
+        "unit_tests": [
+          "Auth dependency rejects missing or invalid tokens"
+        ],
+        "integration_tests": [],
+        "static_checks": [
+          "python -m py_compile src/notes_service/auth.py"
+        ]
+      },
+      "can_parallelize": true
+    },
+    {
+      "module_id": "M-004",
+      "title": "API routes",
+      "description": "Create note routes that depend on the repository and auth modules.",
+      "dependencies": [
+        "M-002",
+        "M-003"
+      ],
+      "files": [
+        {
+          "file_path": "/src/notes_service/routes.py",
+          "purpose": "HTTP handlers for create, list, and delete"
+        }
+      ],
+      "interface_contracts": [
+        "Routes call repository functions and auth dependency exactly as frozen"
+      ],
+      "owner_scope": [
+        "/src/notes_service/routes.py"
+      ],
+      "estimated_effort": "M",
+      "verification": {
+        "unit_tests": [],
+        "integration_tests": [
+          "API route tests for auth and CRUD behavior"
+        ],
+        "static_checks": [
+          "python -m py_compile src/notes_service/routes.py"
+        ]
+      },
+      "can_parallelize": false
+    },
+    {
+      "module_id": "M-005",
+      "title": "Test suite",
+      "description": "Add pytest coverage for repository, auth, and API routes.",
+      "dependencies": [
+        "M-004"
+      ],
+      "files": [
+        {
+          "file_path": "/tests/test_repository.py",
+          "purpose": "Repository tests"
+        },
+        {
+          "file_path": "/tests/test_auth.py",
+          "purpose": "Auth tests"
+        },
+        {
+          "file_path": "/tests/test_routes.py",
+          "purpose": "API tests"
+        }
+      ],
+      "interface_contracts": [
+        "Tests reflect the frozen repository and auth contracts"
+      ],
+      "owner_scope": [
+        "/tests/test_repository.py",
+        "/tests/test_auth.py",
+        "/tests/test_routes.py"
+      ],
+      "estimated_effort": "M",
+      "verification": {
+        "unit_tests": [
+          "pytest tests/test_repository.py",
+          "pytest tests/test_auth.py",
+          "pytest tests/test_routes.py"
+        ],
+        "integration_tests": [
+          "pytest -q"
+        ],
+        "static_checks": []
+      },
+      "can_parallelize": false
+    }
+  ],
+  "execution_waves": [
+    [
+      "M-001"
+    ],
+    [
+      "M-002",
+      "M-003"
+    ],
+    [
+      "M-004"
+    ],
+    [
+      "M-005"
+    ]
+  ],
+  "completion_criteria": [
+    "The API can create, list, and delete notes.",
+    "Token auth is enforced on note routes.",
+    "Repository and route tests exist and are runnable with pytest."
+  ],
+  "notes": "Wave 2 is the only safe parallel wave because the auth and persistence modules do not overlap in file ownership and their interfaces are frozen."
+}

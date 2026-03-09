@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ProgressUpdate",
+  "type": "object",
+  "required": [
+    "project_name",
+    "phase",
+    "module_id",
+    "status",
+    "files_touched",
+    "resume_anchor",
+    "verification",
+    "next_actions"
+  ],
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "EXECUTE",
+        "VERIFY"
+      ]
+    },
+    "active_wave": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "module_id": {
+      "type": "string",
+      "pattern": "^M-[0-9]{3}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "DONE"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "files_touched": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "resume_anchor": {
+      "type": "object",
+      "required": [
+        "strategy",
+        "file_path",
+        "anchor_kind",
+        "anchor_value"
+      ],
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "file_boundary",
+            "symbol_boundary",
+            "patch_hunk",
+            "artifact_digest"
+          ]
+        },
+        "file_path": {
+          "type": "string"
+        },
+        "anchor_kind": {
+          "type": "string",
+          "enum": [
+            "file",
+            "symbol",
+            "line_range",
+            "digest"
+          ]
+        },
+        "anchor_value": {
+          "type": "string"
+        },
+        "content_sha256": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "planned",
+        "completed",
+        "pending"
+      ],
+      "properties": {
+        "planned": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "completed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pending": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "next_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}

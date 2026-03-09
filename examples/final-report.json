@@ -1,0 +1,46 @@
+{
+  "project_name": "notes-service",
+  "status": "PARTIAL",
+  "summary": "The service code and pytest suite were generated. Static compile checks were completed, but the full pytest run still needs to be executed in the user environment.",
+  "delivered_files": [
+    "/src/notes_service/app.py",
+    "/src/notes_service/settings.py",
+    "/src/notes_service/db.py",
+    "/src/notes_service/models.py",
+    "/src/notes_service/repository.py",
+    "/src/notes_service/auth.py",
+    "/src/notes_service/routes.py",
+    "/tests/test_repository.py",
+    "/tests/test_auth.py",
+    "/tests/test_routes.py"
+  ],
+  "verification": {
+    "executed": [
+      "python -m py_compile src/notes_service/app.py",
+      "python -m py_compile src/notes_service/repository.py",
+      "python -m py_compile src/notes_service/auth.py",
+      "python -m py_compile src/notes_service/routes.py"
+    ],
+    "not_executed": [
+      "pytest -q"
+    ],
+    "evidence": [
+      "Progress updates recorded file-boundary anchors for completed modules.",
+      "The final integration wave preserved the planned auth and repository contracts."
+    ]
+  },
+  "run_commands": [
+    "python -m venv .venv && source .venv/bin/activate",
+    "pip install -r requirements.txt",
+    "pytest -q",
+    "uvicorn notes_service.app:create_app --factory --reload"
+  ],
+  "known_issues": [
+    "The full pytest run was not executed in this environment."
+  ],
+  "next_steps": [
+    "Run pytest locally.",
+    "Swap SQLite for the deployment database if needed.",
+    "Add CI for lint and test commands."
+  ]
+}
