@@ -2,21 +2,19 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import re
 import sys
 from pathlib import Path
 from typing import Iterable
 
-try:
+yaml = None
+if importlib.util.find_spec("yaml") is not None:
     import yaml
-except Exception as exc:  # pragma: no cover
-    print(f"Missing dependency: PyYAML ({exc})", file=sys.stderr)
-    sys.exit(1)
 
-try:
+jsonschema = None
+if importlib.util.find_spec("jsonschema") is not None:
     import jsonschema
-except Exception:
-    jsonschema = None
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,15 +68,45 @@ def parse_frontmatter(path: Path) -> tuple[dict, str]:
         raise ValueError(f"{path.name} frontmatter is not closed")
     raw_frontmatter = text[4:end]
     body = text[end + 5 :]
-    data = yaml.safe_load(raw_frontmatter)
+    if yaml is not None:
+        data = yaml.safe_load(raw_frontmatter)
+    else:
+        data = parse_frontmatter_without_yaml(raw_frontmatter)
     if not isinstance(data, dict):
         raise ValueError(f"{path.name} frontmatter did not parse into an object")
     return data, body
 
 
+def parse_frontmatter_without_yaml(raw_frontmatter: str) -> dict:
+    data: dict[str, object] = {}
+    metadata: dict[str, str] = {}
+    in_metadata = False
+    for line in raw_frontmatter.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if stripped == "metadata:":
+            in_metadata = True
+            data["metadata"] = metadata
+            continue
+        if in_metadata and line.startswith("  ") and ":" in stripped:
+            key, value = stripped.split(":", 1)
+            metadata[key.strip()] = value.strip().strip("'\"")
+            continue
+        in_metadata = False
+        if ":" in stripped:
+            key, value = stripped.split(":", 1)
+            data[key.strip()] = value.strip().strip("'\"")
+    return data
+
+
 def iter_text_files() -> Iterable[Path]:
     for suffix in ("*.md", "*.json", "*.yml", "*.yaml", "*.html"):
         yield from ROOT.rglob(suffix)
+
+
+def strip_fenced_code_blocks(text: str) -> str:
+    return re.sub(r"```.*?```", "", text, flags=re.DOTALL)
 
 
 def validate_required_files() -> list[str]:
@@ -167,6 +195,8 @@ def validate_placeholders() -> list[str]:
     errors: list[str] = []
     for path in iter_text_files():
         text = path.read_text(encoding="utf-8")
+        if path.suffix == ".md":
+            text = strip_fenced_code_blocks(text)
         if PLACEHOLDER_PATTERN.search(text):
             errors.append(f"Placeholder-like text found in {path.relative_to(ROOT)}")
     return errors

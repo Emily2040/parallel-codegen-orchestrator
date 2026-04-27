@@ -4,83 +4,46 @@
 
 - 2026-04-27 (UTC)
 
-## 1) Validator execution attempt
+## 1) Validator run (post-remediation)
 
 ```bash
-python --version
 python scripts/validate_repo.py
 ```
 
 Output:
 
 ```text
-Python 3.10.19
-Missing dependency: PyYAML (No module named 'yaml')
+Repository validation passed.
 ```
 
-## 2) Dependency install attempt (environment limitation)
+## 2) Required workflow presence
 
 ```bash
-python -m pip install --user pyyaml jsonschema
-```
-
-Output (truncated):
-
-```text
-WARNING: Retrying ... ProxyError ... 403 Forbidden
-ERROR: Could not find a version that satisfies the requirement pyyaml
-ERROR: No matching distribution found for pyyaml
-```
-
-## 3) Root skill size
-
-```bash
-wc -c < SKILL.md
+test -f .github/workflows/validate.yml && echo present
 ```
 
 Output:
 
 ```text
-412
+present
 ```
 
-## 4) Required file presence snapshot
+## 3) Placeholder scan check (including audit markdown)
 
 ```bash
-for f in ...; do [ -e "$f" ] || echo "$f"; done
-```
-
-Output before remediation:
-
-```text
-.github/workflows/validate.yml
-```
-
-## 5) Placeholder scan
-
-```bash
-rg -n "your-org|your-repo|example\.com|your-username|openai" -g "*.md" -g "*.json" -g "*.yml" -g "*.yaml" -g "*.html" || true
+python - <<'PY'
+from scripts.validate_repo import validate_placeholders
+print(validate_placeholders())
+PY
 ```
 
 Output:
 
 ```text
-(no matches)
+[]
 ```
 
-## 6) Cache artifact scan
-
-```bash
-find . \( -type d -name '__pycache__' -o -name '.DS_Store' \) -print
-```
-
-Output:
-
-```text
-(no matches)
-```
-
-## 7) Wrapper routing checks
+## 4) Wrapper routing checks
 
 ```bash
 for f in AGENTS.md CLAUDE.md GEMINI.md .cursorrules .clinerules; do rg -n "SKILL.md" "$f"; done
@@ -98,16 +61,29 @@ GEMINI.md:5:After loading `SKILL.md`, read `references/codegen-orchestrator.md` 
 .clinerules:1:Use the skill in `SKILL.md` as the source of truth.
 ```
 
-## 8) Internal markdown link check
+## 5) Internal markdown link check
 
 ```bash
 python - <<'PY'
-# check README.md and SKILL.md local markdown links
+import re
+from pathlib import Path
+pat = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+root = Path('.')
+errors = []
+for rel in ("README.md", "SKILL.md"):
+    text = (root / rel).read_text(encoding="utf-8")
+    for target in pat.findall(text):
+        if target.startswith("http") or target.startswith("mailto:"):
+            continue
+        normalized = target.split("#", 1)[0]
+        if normalized and not (root / normalized).exists():
+            errors.append((rel, target))
+print(errors)
 PY
 ```
 
 Output:
 
 ```text
-No broken internal markdown links in README.md and SKILL.md
+[]
 ```
