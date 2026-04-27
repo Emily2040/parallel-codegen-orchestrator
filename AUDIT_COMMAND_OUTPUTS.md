@@ -1,33 +1,89 @@
 # Audit command outputs
 
-## 1. YAML Parse Test
-{'name': 'parallel-codegen-orchestrator', 'description': 'Plan, resume, verify, and safely parallelize substantial code work.', 'license': 'MIT', 'metadata': {'author': 'Iamemily2050', 'repo': 'https://github.com/Emily2040/parallel-codegen-orchestrator'}}
+## Run date
 
-## 2. Character Count
-412 SKILL.md
+- 2026-04-27 (UTC)
 
-## 3. Placeholder Scan
-No placeholder matches
+## 1) Validator run (post-remediation)
 
-## 4. Cache Check
-No cache artifacts found
+```bash
+python scripts/validate_repo.py
+```
 
-## 5. Author Consistency
-SKILL.md:6:  author: "Iamemily2050"
-SKILL.md:7:  repo: "https://github.com/Emily2040/parallel-codegen-orchestrator"
-README.md:4:[![CI](https://img.shields.io/github/actions/workflow/status/Emily2040/parallel-codegen-orchestrator/validate.yml?branch=main&label=CI)](https://github.com/Emily2040/parallel-codegen-orchestrator/actions/workflows/validate.yml)
-README.md:5:[![Skill](https://img.shields.io/badge/skill-parallel--codegen-blue)](https://github.com/Emily2040/parallel-codegen-orchestrator)
-README.md:159:Created by **Iamemily2050**.
-README.md:161:- GitHub: [Emily2040](https://github.com/Emily2040)
-README.md:162:- Website: [Iamemily2050.com](https://Iamemily2050.com)
-LICENSE:3:Copyright (c) 2026 Iamemily2050
-docs/index.html:66:          Created by <strong>Iamemily2050</strong>. View the project on
-docs/index.html:67:          <a href="https://github.com/Emily2040">GitHub</a>.
+Output:
 
-## 6. Broken Internal Links
-
-## 7. YAML Surrogate Scan
-No surrogate escapes found
-
-## 8. Validator
+```text
 Repository validation passed.
+```
+
+## 2) Required workflow presence
+
+```bash
+test -f .github/workflows/validate.yml && echo present
+```
+
+Output:
+
+```text
+present
+```
+
+## 3) Placeholder scan check (including audit markdown)
+
+```bash
+python - <<'PY'
+from scripts.validate_repo import validate_placeholders
+print(validate_placeholders())
+PY
+```
+
+Output:
+
+```text
+[]
+```
+
+## 4) Wrapper routing checks
+
+```bash
+for f in AGENTS.md CLAUDE.md GEMINI.md .cursorrules .clinerules; do rg -n "SKILL.md" "$f"; done
+```
+
+Output:
+
+```text
+AGENTS.md:3:Canonical instructions live in `SKILL.md`.
+AGENTS.md:6:1. `SKILL.md`
+CLAUDE.md:3:Use the canonical skill at `SKILL.md`, then follow `references/codegen-orchestrator.md`.
+GEMINI.md:3:Canonical source: `SKILL.md`
+GEMINI.md:5:After loading `SKILL.md`, read `references/codegen-orchestrator.md` and only the relevant files in `skills/core/`.
+.cursorrules:1:Use the skill in `SKILL.md` as the source of truth.
+.clinerules:1:Use the skill in `SKILL.md` as the source of truth.
+```
+
+## 5) Internal markdown link check
+
+```bash
+python - <<'PY'
+import re
+from pathlib import Path
+pat = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+root = Path('.')
+errors = []
+for rel in ("README.md", "SKILL.md"):
+    text = (root / rel).read_text(encoding="utf-8")
+    for target in pat.findall(text):
+        if target.startswith("http") or target.startswith("mailto:"):
+            continue
+        normalized = target.split("#", 1)[0]
+        if normalized and not (root / normalized).exists():
+            errors.append((rel, target))
+print(errors)
+PY
+```
+
+Output:
+
+```text
+[]
+```

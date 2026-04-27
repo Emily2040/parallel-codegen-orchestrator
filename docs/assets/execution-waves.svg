@@ -1,0 +1,67 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Parallel execution waves infographic</title>
+  <desc id="desc">Dependency-aware execution waves with serialized integration and verification.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1222"/>
+      <stop offset="1" stop-color="#131F38"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="140" y1="130" x2="1060" y2="130" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="1400" height="900" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#020617" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="700" rx="24" fill="url(#bg)"/>
+  <rect x="70" y="60" width="1060" height="72" rx="16" fill="#0E1A30" stroke="#334155"/>
+  <rect x="84" y="73" width="1032" height="46" rx="12" fill="url(#accent)" fill-opacity="0.17"/>
+  <text x="100" y="105" fill="#E2E8F0" font-size="28" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700">Parallel Codegen Execution Waves</text>
+
+  <g filter="url(#shadow)">
+    <rect x="90" y="190" width="230" height="140" rx="18" fill="#0F172A" stroke="#475569"/>
+    <text x="112" y="225" fill="#38BDF8" font-size="20" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700">Wave 1</text>
+    <text x="112" y="255" fill="#CBD5E1" font-size="18" font-family="Inter,Segoe UI,Arial,sans-serif">Interface freeze</text>
+    <text x="112" y="282" fill="#94A3B8" font-size="16" font-family="Inter,Segoe UI,Arial,sans-serif">Contracts + stubs</text>
+
+    <rect x="360" y="190" width="230" height="140" rx="18" fill="#0F172A" stroke="#475569"/>
+    <text x="382" y="225" fill="#38BDF8" font-size="20" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700">Wave 2A</text>
+    <text x="382" y="255" fill="#CBD5E1" font-size="18" font-family="Inter,Segoe UI,Arial,sans-serif">Module Alpha</text>
+    <text x="382" y="282" fill="#94A3B8" font-size="16" font-family="Inter,Segoe UI,Arial,sans-serif">No file overlap</text>
+
+    <rect x="360" y="370" width="230" height="140" rx="18" fill="#0F172A" stroke="#475569"/>
+    <text x="382" y="405" fill="#A78BFA" font-size="20" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700">Wave 2B</text>
+    <text x="382" y="435" fill="#CBD5E1" font-size="18" font-family="Inter,Segoe UI,Arial,sans-serif">Module Beta</text>
+    <text x="382" y="462" fill="#94A3B8" font-size="16" font-family="Inter,Segoe UI,Arial,sans-serif">Parallel-safe branch</text>
+
+    <rect x="640" y="280" width="230" height="140" rx="18" fill="#0F172A" stroke="#475569"/>
+    <text x="662" y="315" fill="#22D3EE" font-size="20" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700">Wave 3</text>
+    <text x="662" y="345" fill="#CBD5E1" font-size="18" font-family="Inter,Segoe UI,Arial,sans-serif">Integration</text>
+    <text x="662" y="372" fill="#94A3B8" font-size="16" font-family="Inter,Segoe UI,Arial,sans-serif">Serialized merge</text>
+
+    <rect x="920" y="280" width="200" height="140" rx="18" fill="#0F172A" stroke="#475569"/>
+    <text x="942" y="315" fill="#4ADE80" font-size="20" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700">Verify</text>
+    <text x="942" y="345" fill="#CBD5E1" font-size="18" font-family="Inter,Segoe UI,Arial,sans-serif">Tests & checks</text>
+    <text x="942" y="372" fill="#94A3B8" font-size="16" font-family="Inter,Segoe UI,Arial,sans-serif">Truthful status</text>
+  </g>
+
+  <g stroke="#64748B" stroke-width="3" stroke-linecap="round">
+    <path d="M320 260H350"/>
+    <path d="M320 440H350"/>
+    <path d="M590 260C620 260 620 320 640 320"/>
+    <path d="M590 440C620 440 620 360 640 360"/>
+    <path d="M870 350H910"/>
+  </g>
+  <g fill="#64748B">
+    <polygon points="346,252 360,260 346,268"/>
+    <polygon points="346,432 360,440 346,448"/>
+    <polygon points="636,312 650,320 636,328"/>
+    <polygon points="636,352 650,360 636,368"/>
+    <polygon points="906,342 920,350 906,358"/>
+  </g>
+
+  <rect x="90" y="560" width="1030" height="82" rx="14" fill="#0E1A30" stroke="#334155"/>
+  <text x="116" y="606" fill="#CBD5E1" font-size="20" font-family="Inter,Segoe UI,Arial,sans-serif">Gate rule: parallelize only when dependencies are satisfied, interfaces are frozen, and file ownership does not overlap.</text>
+</svg>

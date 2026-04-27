@@ -86,3 +86,12 @@ If a platform supports concurrent tools or sub-agents, the same wave can run asy
 ## Bottom line
 
 The new skill is less theatrical, more portable, and more truthful. It trades “unbreakable industrial-grade prompt” energy for something much closer to actual engineering discipline.
+
+## Front-end refresh (April 2026)
+
+The documentation front end was upgraded from a single-card static page to a richer landing experience with:
+- modern dark gradient visual style
+- explicit workflow framing
+- dedicated infographic for dependency-aware execution waves (`docs/assets/execution-waves.svg`)
+
+This keeps the docs aligned with the anti-slop goals: clearer structure, more signal, and less generic filler language.
